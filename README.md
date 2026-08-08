@@ -11,8 +11,12 @@ SDK for a Bonelab mod, for mimicking BoneLib
 The Menu system and Message box manager are accesible via a custom [Noodled Events](https://github.com/holadivinus/Noodled-Events) cookbook
 add this to your project using git to get the cookbook
 
-# How to make your spawnable load on scene start:
+# How to make your spawnable spawn on scene start:
 its simple - just add an "OnLoad" tag to your crate
+![screenshot](desc~/tag.png)
+
+# When publishing mods made with this !IMPORTANT!
+you must add LabLib as a dependency
 
 # Node documentation
 Currently there are 10 nodes:
