@@ -1,5 +1,5 @@
 # LabLibSDK
-SDK for a Bonelab mod, for mimicking BoneLib
+SDK for a Bonelab mod, for mimicking [BoneLib](https://github.com/yowchap/BoneLib/tree/main?tab=readme-ov-file)
 
 # Features
 - A menu system for other mods to use
