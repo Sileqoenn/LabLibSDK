@@ -16,7 +16,7 @@ add this to your project using git to get the cookbook
 This is usefull for initializing your ModPage and background logic
 <br><br>
 its simple - just add an "OnLoad" tag to your crate
-![screenshot](desc~/tag.png)
+![screenshot](desc/tag.png)
 
 # When publishing mods made with this !IMPORTANT!
 you must add LabLib as a dependency
@@ -91,7 +91,7 @@ Currently there are 10 nodes:
 ---
 # Example Usage
 **Mod Initialization**
-![screenshot](desc~/exampleuse.png)
+![screenshot](desc/exampleuse.png)
 Making the ModPage, adding elements to it, and subscribing ult events/comp storages to change events.
 
 Also Note:
@@ -99,5 +99,5 @@ Also Note:
   if adding an Event AND Value Callback to a single variable - the value should be added first, im too lazy to explain why.
 <br><br><br><br><br>
 **Using Callbacks**
-![screenshot](desc~/callbackexample.png)
+![screenshot](desc/callbackexample.png)
 the ultevent youre seeing is subscribed to an Event element, the Amount (Sprite Renderer) is subscribed to an Int Element.
