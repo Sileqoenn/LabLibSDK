@@ -92,7 +92,7 @@ Currently there are 10 nodes:
 # Example Usage
 **Mod Initialization**
 ![screenshot](desc~/exampleuse.png)
-Making the ModPage, adding elements to it, and subscribing ult events/comp storages to events.
+Making the ModPage, adding elements to it, and subscribing ult events/comp storages to change events.
 
 Also Note:
 
