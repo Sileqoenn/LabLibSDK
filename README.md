@@ -80,7 +80,7 @@ Currently there are 10 nodes:
 ---
 # Example Usage
 **Mod Initialization**
-![screenshot](desc/exampleuse.png)
+![screenshot](desc~/exampleuse.png)
 Making elements and subscribing ult events/comp storages to events.
 
 Also Note:
@@ -88,5 +88,5 @@ Also Note:
   if adding an Event AND Value Callback to a single variable - the value should be added first, im too lazy to explain why.
 <br><br><br><br><br>
 **Using Callbacks**
-![screenshot](desc/callbackexample.png)
+![screenshot](desc~/callbackexample.png)
 the ultevent youre seeing is subscribed to an Event element, the Amount (Sprite Renderer) is subscribed to an Int Element.
