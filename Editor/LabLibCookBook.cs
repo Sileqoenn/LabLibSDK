@@ -1,19 +1,15 @@
 #if UNITY_EDITOR
-using Newtonsoft.Json.Linq;
 using NoodledEvents;
 using SLZ.Marrow.Warehouse;
-using SLZ.MLAgents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TriangleNet.Meshing;
 using UltEvents;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.AffordanceSystem.State;
 using static NoodledEvents.CookBook.NodeDef;
-using static SLZ.Bonelab.ArenaLootItem;
 using UObject = UnityEngine.Object;
 
 public class LabLibCookBook : CookBook
