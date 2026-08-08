@@ -1,0 +1,21 @@
+{
+    "name": "LabLibSDK",
+    "rootNamespace": "LabLibSDK",
+    "references": [
+        "GUID:bf9d1ae7904474348a2181cf6f3a3a32",
+        "GUID:57a6d82589ae03c4cabdc058f719f231",
+        "GUID:20441fdfffb12d24da9276657491883e",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:7cd6d904fb8c0034d8cab196b3de4076",
+        "GUID:c86a26d8b8257bb4fa71737f63116422"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
