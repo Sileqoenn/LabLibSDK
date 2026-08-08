@@ -16,7 +16,7 @@ add this to your project using git to get the cookbook
 This is usefull for initializing your ModPage and background logic
 <br><br>
 Its very simple - just add an "OnLoad" tag to your crate
-<br>
+<br><br>
 ![screenshot](desc/tag.png)
 
 # When publishing mods made with this !IMPORTANT!
