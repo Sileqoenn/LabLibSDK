@@ -1,0 +1,12 @@
+{
+    "name": "com.sileqoenn.lablibsdk",
+    "version": "1.0",
+    "displayName": "LabLibSDK",
+    "description": "NoodledEvents extension for LabLib",
+    "unity": "2021.3",
+  "author": {
+    "name": "sileqoenn",
+    "email": "sileqoenn@gmail.com",
+    "url": "https://github.com/Sileqoenn/LabLibSDK"
+  }
+}
