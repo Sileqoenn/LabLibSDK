@@ -13,6 +13,8 @@ The Menu system and Message box manager are accesible via a custom [Noodled Even
 add this to your project using git to get the cookbook
 
 # How to make your spawnable spawn on scene start:
+This is usefull for initializing your ModPage and background logic
+<br><br><br>
 its simple - just add an "OnLoad" tag to your crate
 ![screenshot](desc~/tag.png)
 
