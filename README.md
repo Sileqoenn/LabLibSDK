@@ -15,7 +15,8 @@ add this to your project using git to get the cookbook
 # How to make your spawnable spawn on scene start:
 This is usefull for initializing your ModPage and background logic
 <br><br>
-its simple - just add an "OnLoad" tag to your crate
+Its very simple - just add an "OnLoad" tag to your crate
+<br>
 ![screenshot](desc/tag.png)
 
 # When publishing mods made with this !IMPORTANT!
