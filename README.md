@@ -1,14 +1,18 @@
-# LabLib
-Bonelab mod, partial port of a code mod "BoneLib"
+# LabLibSDK
+SDK for a Bonelab mod, for mimicking BoneLib
 
 # Features
 - A menu system for other mods to use
 - Spawn message boxes for the player
+- Spawning your spawnables on scene start
 - ModPage variables persist between game sessions
 
+[LabLib mod is required for the noodled events to work](https://mod.io/g/bonelab/m/lablib-partial-bonelib-port#description)
 The Menu system and Message box manager are accesible via a custom [Noodled Events](https://github.com/holadivinus/Noodled-Events) cookbook
-
 add this to your project using git to get the cookbook
+
+# How to make your spawnable load on scene start:
+its simple - just add an "OnLoad" tag to your crate
 
 # Node documentation
 Currently there are 10 nodes:
