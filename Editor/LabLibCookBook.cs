@@ -24,7 +24,7 @@ public class LabLibCookBook : CookBook
             bookTag: "registerMod"));
         allDefs.Add(new NodeDef(this, "lablib.isModRegistered",
              inputs: () => new[] { new Pin("Exec"), new Pin("pallet", typeof(Pallet), true) },
-            outputs: () => new[] { new Pin("Done"), new Pin("registered", tyepof(bool), true) },
+            outputs: () => new[] { new Pin("Done"), new Pin("registered", typeof(bool), true) },
             bookTag: "isModRegistered"));
         allDefs.Add(new NodeDef(this, "lablib.addChangeCallback",
              inputs: () => new[] { new Pin("Exec"), new Pin("pallet", typeof(Pallet), true) , new Pin("callback object", typeof(UObject), true), new Pin("var name", typeof(string), true) },
@@ -259,10 +259,10 @@ public class LabLibCookBook : CookBook
                     evt.PersistentCallsList.AddRunMethod(m_invokeholder, ultevent);
 
                     int sretval = GetComponentInParent(compgetter, typeof(Mask));
-                    int retval = evt.PersistentCallsList.AddRunMethod(FindGetSet(typeof(Mask), "get_showMaskGraphic"), retval);
+                    int retval = evt.PersistentCallsList.AddRunMethod(FindGetSet(typeof(Mask), "get_showMaskGraphic"), sretval);
 
                     node.DataOutputs[0].CompEvt = evt;
-                    node.DataOutputs[0].CompCall = retval;
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[retval];
 
                     var evtNext3 = node.FlowOutputs[0].Target?.Node;
                     if (evtNext3 != null)
