@@ -62,6 +62,10 @@ public class LabLibCookBook : CookBook
              inputs: () => new[] { new Pin("Exec"), new Pin("pallet", typeof(Pallet), true), new Pin("name", typeof(string), true), new Pin("color", typeof(Color), true) },
             outputs: () => new[] { new Pin("Done") },
             bookTag: "makeEvent"));
+        allDefs.Add(new NodeDef(this, "lablib.isSpawnedWithLabLib",
+             inputs: () => new[] { new Pin("Exec") },
+            outputs: () => new[] { new Pin("Done"), new Pin("spawned with lablib", typeof(bool), true) },
+            bookTag: "isSpawnedWithLabLib"));
 
         progressCallback.Invoke(allDefs, 1);
         completedCallback.Invoke();
@@ -89,7 +93,7 @@ public class LabLibCookBook : CookBook
         var m_settext = typeof(Text).GetMethods().First(m => m.Name == "set_text");
         var m_setshowmask = typeof(Mask).GetMethods().First(m => m.Name == "set_showMaskGraphic");
         var m_setcolor = typeof(SpriteRenderer).GetMethods().First(m => m.Name == "set_color");
-        if (compgetter == null || prevdataroot != dataRoot)
+        if (node.BookTag != "isSpawnedWithLabLib" && (compgetter == null || prevdataroot != dataRoot))
             compgetter = dataRoot.StoreTransform("compgetter");
         var tr_find = tr.GetMethod("Find");
         const string APIPATH = "/GameplaySystems [0]/LabLib/API/";
@@ -267,6 +271,31 @@ public class LabLibCookBook : CookBook
                         new PersistentArgument().ToRetVal(retval, typeof(bool)),
                         new PersistentArgument().FSetType(PersistentArgumentType.Bool));
                     evt.PersistentCallsList.Add(negate);
+
+                    node.DataOutputs[0].CompEvt = evt;
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[^1];
+
+                    var evtNext3 = node.FlowOutputs[0].Target?.Node;
+                    if (evtNext3 != null)
+                        evtNext3.Book.CompileNode(evt, evtNext3, dataRoot);
+                } break;
+            case "isSpawnedWithLabLib":
+                {
+
+                    var path = new PersistentCall(null, null);
+                    path.FSetMethodName("SLZ.Marrow.Utilities.ObjectPathExtensions, SLZ.Marrow, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null.ObjectPath");
+                    path.FSetArguments(
+                        new PersistentArgument().FSetType(PersistentArgumentType.Object).FSetObject(dataRoot).FSetString(tr.AssemblyQualifiedName)
+                    );
+                    evt.PersistentCallsList.Add(path);
+
+                    var ismatch = new PersistentCall(null, null);
+                    ismatch.FSetMethodName("System.Text.RegularExpressions.Regex, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089.IsMatch");
+                    ismatch.FSetArguments(
+                        new PersistentArgument().ToRetVal(evt.PersistentCallsList.Count - 1, typeof(string)),
+                        new PersistentArgument().FSetType(PersistentArgumentType.String).FSetString(@"^.+\/LabLib\/SpawnMods\/SpawnedMods")
+                        );
+                    evt.PersistentCallsList.Add(ismatch);
 
                     node.DataOutputs[0].CompEvt = evt;
                     node.DataOutputs[0].CompCall = evt.PersistentCallsList[^1];
@@ -595,7 +624,8 @@ public class LabLibCookBook : CookBook
 
         var call_parent = new PersistentCall(tr.GetMethod("SetParent", UltEventUtils.AnyAccessBindings, null, new Type[] { typeof(Transform) }, null), compgetter);
         call_parent.PersistentArguments[0].Object = dataRoot;
-        evt.PersistentCallsList.Add(call_parent);
+        if (node.BookTag != "isSpawnedWithLabLib")
+            evt.PersistentCallsList.Add(call_parent);
         prevdataroot = dataRoot;
     }
 
