@@ -261,8 +261,15 @@ public class LabLibCookBook : CookBook
                     int sretval = GetComponentInParent(compgetter, typeof(Mask));
                     int retval = evt.PersistentCallsList.AddRunMethod(FindGetSet(typeof(Mask), "get_showMaskGraphic"), sretval);
 
+                    var negate = new PersistentCall(null, null);
+                    negate.FSetMethodName("System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089.Equals");
+                    negate.FSetArguments(
+                        new PersistentArgument().ToRetVal(retval, typeof(bool)),
+                        new PersistentArgument().FSetType(PersistentArgumentType.Bool));
+                    evt.PersistentCallsList.Add(negate);
+
                     node.DataOutputs[0].CompEvt = evt;
-                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[retval];
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[^1];
 
                     var evtNext3 = node.FlowOutputs[0].Target?.Node;
                     if (evtNext3 != null)
