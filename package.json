@@ -1,6 +1,6 @@
 {
     "name": "com.sileqoenn.lablibsdk",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "displayName": "LabLibSDK",
     "description": "NoodledEvents extension for LabLib",
     "unity": "2021.3",
