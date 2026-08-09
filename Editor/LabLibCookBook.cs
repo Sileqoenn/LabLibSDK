@@ -22,6 +22,10 @@ public class LabLibCookBook : CookBook
              inputs: () => new[] { new Pin("Exec"), new Pin("pallet", typeof(Pallet), true) },
             outputs: () => new[] { new Pin("Done") },
             bookTag: "registerMod"));
+        allDefs.Add(new NodeDef(this, "lablib.isModRegistered",
+             inputs: () => new[] { new Pin("Exec"), new Pin("pallet", typeof(Pallet), true) },
+            outputs: () => new[] { new Pin("Done"), new Pin("registered", tyepof(bool), true) },
+            bookTag: "isModRegistered"));
         allDefs.Add(new NodeDef(this, "lablib.addChangeCallback",
              inputs: () => new[] { new Pin("Exec"), new Pin("pallet", typeof(Pallet), true) , new Pin("callback object", typeof(UObject), true), new Pin("var name", typeof(string), true) },
             outputs: () => new[] { new Pin("Done") },
@@ -235,6 +239,30 @@ public class LabLibCookBook : CookBook
                     int ultevent = GetComponentInParent(compgetter, typeof(UltEventHolder));
 
                     evt.PersistentCallsList.AddRunMethod(m_invokeholder, ultevent);
+
+                    var evtNext3 = node.FlowOutputs[0].Target?.Node;
+                    if (evtNext3 != null)
+                        evtNext3.Book.CompileNode(evt, evtNext3, dataRoot);
+                } break;
+            case "isModRegistered":
+                {
+                    ParentToTransform(APIPATH + "IsModRegistered/pallet/retval");
+
+                    int pallet = GetComponentInParent(compgetter, typeof(XRInteractorAffordanceStateProvider));
+                    evt.PersistentCallsList.AddRunMethod(m_setsource, pallet, 
+                        new PersistentArgument()
+                            .FSetType(PersistentArgumentType.Object)
+                            .FSetString(typeof(Pallet).AssemblyQualifiedName)
+                            .FSetObject(node.DataInputs[0].DefaultObject));
+
+                    int ultevent = GetComponentInParent(compgetter, typeof(UltEventHolder));
+                    evt.PersistentCallsList.AddRunMethod(m_invokeholder, ultevent);
+
+                    int sretval = GetComponentInParent(compgetter, typeof(Mask));
+                    int retval = evt.PersistentCallsList.AddRunMethod(FindGetSet(typeof(Mask), "get_showMaskGraphic"), retval);
+
+                    node.DataOutputs[0].CompEvt = evt;
+                    node.DataOutputs[0].CompCall = retval;
 
                     var evtNext3 = node.FlowOutputs[0].Target?.Node;
                     if (evtNext3 != null)
