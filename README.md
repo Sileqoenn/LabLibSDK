@@ -23,12 +23,20 @@ Its very simple - just add an "OnLoad" tag to your crate
 you must add LabLib as a dependency
 
 # Node documentation
-Currently there are 10 nodes:
+Currently there are 12 nodes:
 ---
 - **lablib.registerMod**
   - `Makes a page for your mod in the labmenu`
   - > Takes in a pallet (Pallet)
   - > const parameters, (using returned values in a parameter wont work)
+---
+- **lablib.isModRegistered**
+  - `Returns true if mod is registered`
+  - > Takes in a pallet (Pallet)
+  - > const parameters
+---
+- **lablib.isSpawnedWithLabLib**
+  - `Returns true if parented to LabLib's spawned mod storage`
 ---
 - **lablib.addChangeCallback**
   - `Invokes provided UltEventHolders on adding (If the variable isnt an event) or when a variable changes or when an event button is pressed`
