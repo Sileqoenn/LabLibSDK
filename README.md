@@ -152,3 +152,7 @@ Also Note:
 **Using Callbacks**
 ![screenshot](desc/callbackexample.png)
 the ultevent youre seeing is subscribed to an Event element, the Amount (Sprite Renderer) is subscribed to an Int Element.
+<br><br><br><br><br>
+**Using harmony patches**
+![screenshot](desc/patcheditor.png)
+![screenshot](desc/patchgame.png)
