@@ -304,11 +304,11 @@ public class LabLibCookBook : CookBook
             evt.PersistentCallsList.Add(call);
             return evt.PersistentCallsList.Count - 1;
         }
-        int AddAnd(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
+        int sqlboolAnd(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
         {
-            var call = new PersistentCall(objequals, null);
-            objeqArgHelper(call, 0, a, ia);
-            objeqArgHelper(call, 1, b, ib);
+            var call = new PersistentCall(typeof(SqlBoolean).GetMethod("op_BitwiseAnd"), null);
+            objeqArgHelper(call, 0, a, ia, typeof(SqlBoolean));
+            objeqArgHelper(call, 1, b, ib, typeof(SqlBoolean));
 
             evt.PersistentCallsList.Add(call);
             return evt.PersistentCallsList.Count - 1;
@@ -320,6 +320,14 @@ public class LabLibCookBook : CookBook
 
             evt.PersistentCallsList.Add(call);
             return evt.PersistentCallsList.Count - 1;
+        }
+        int AddAnd(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
+        {
+            int sqla = sqlboolImplcit(a, ia);
+            int sqlb = sqlboolImplcit(b, ib);
+
+            int sqlXor = sqlboolAnd(sqla, sqlb, null, null);
+            return sqlboolTrue(sqlXor, null);
         }
         int sqlboolOr(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
         {
