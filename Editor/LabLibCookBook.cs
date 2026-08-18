@@ -1,15 +1,20 @@
 #if UNITY_EDITOR
 using NoodledEvents;
+using SLZ.Bonelab;
 using SLZ.Marrow.Warehouse;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Reflection;
 using UltEvents;
+using Unity.Sentis.Layers;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 using UnityEngine.XR.Interaction.Toolkit.AffordanceSystem.State;
 using static NoodledEvents.CookBook.NodeDef;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using UObject = UnityEngine.Object;
 
 public class LabLibCookBook : CookBook
@@ -66,6 +71,38 @@ public class LabLibCookBook : CookBook
              inputs: () => new[] { new Pin("Exec") },
             outputs: () => new[] { new Pin("Done"), new Pin("spawned with lablib", typeof(bool), true) },
             bookTag: "isSpawnedWithLabLib"));
+        allDefs.Add(new NodeDef(this, "lablib.harmony.patchPrefix",
+             inputs: () => new[] { new Pin("Exec"), new Pin("class", typeof(Type)), new Pin("methodName", typeof(string)), new Pin("params", typeof(string)) },
+            outputs: () => new[] { new Pin("On Patch"), new Pin("On Triggered"), new Pin("__instance", typeof(object), true), new Pin("params", typeof(object[]), true) },
+            bookTag: "harmonyPatchPrefix"));
+        allDefs.Add(new NodeDef(this, "lablib.harmony.patchPostfix",
+             inputs: () => new[] { new Pin("Exec"), new Pin("class", typeof(Type)), new Pin("methodName", typeof(string)), new Pin("params", typeof(string)) },
+            outputs: () => new[] { new Pin("On Patch"), new Pin("On Triggered"), new Pin("__instance", typeof(object), true), new Pin("params", typeof(object[]), true) },
+            bookTag: "harmonyPatchPostfix"));
+        allDefs.Add(new NodeDef(this, "lablib.harmony.invokeOriginal",
+             inputs: () => new[] { new Pin("Exec"), new Pin("invoke original", typeof(bool)) },
+            outputs: () => new[] { new Pin("Done") },
+            bookTag: "harmonyInvokeOriginal"));
+        allDefs.Add(new NodeDef(this, "op.not",
+             inputs: () => new[] { new Pin("Exec"), new Pin("a", typeof(bool)) },
+            outputs: () => new[] { new Pin("Done"), new Pin("!a", typeof(bool)) },
+            bookTag: "opnot"));
+        allDefs.Add(new NodeDef(this, "op.or",
+             inputs: () => new[] { new Pin("Exec"), new Pin("a", typeof(bool)), new Pin("b", typeof(bool)) },
+            outputs: () => new[] { new Pin("Done"), new Pin("a | b", typeof(bool)) },
+            bookTag: "opor"));
+        allDefs.Add(new NodeDef(this, "op.and",
+             inputs: () => new[] { new Pin("Exec"), new Pin("a", typeof(bool)), new Pin("b", typeof(bool)) },
+            outputs: () => new[] { new Pin("Done"), new Pin("a & b", typeof(bool)) },
+            bookTag: "opand"));
+        allDefs.Add(new NodeDef(this, "op.xor",
+             inputs: () => new[] { new Pin("Exec"), new Pin("a", typeof(bool)), new Pin("b", typeof(bool)) },
+            outputs: () => new[] { new Pin("Done"), new Pin("a ^ b", typeof(bool)) },
+            bookTag: "opxor"));
+        allDefs.Add(new NodeDef(this, "op.isNull",
+             inputs: () => new[] { new Pin("Exec"), new Pin("a", typeof(object)) },
+            outputs: () => new[] { new Pin("Done"), new Pin("a == null", typeof(bool)) },
+            bookTag: "opisnull"));
 
         progressCallback.Invoke(allDefs, 1);
         completedCallback.Invoke();
@@ -93,7 +130,7 @@ public class LabLibCookBook : CookBook
         var m_settext = typeof(Text).GetMethods().First(m => m.Name == "set_text");
         var m_setshowmask = typeof(Mask).GetMethods().First(m => m.Name == "set_showMaskGraphic");
         var m_setcolor = typeof(SpriteRenderer).GetMethods().First(m => m.Name == "set_color");
-        if (node.BookTag != "isSpawnedWithLabLib" && (compgetter == null || prevdataroot != dataRoot))
+        if ((node.BookTag != "isSpawnedWithLabLib" && !node.BookTag.Contains("harmony") && !node.BookTag.Contains("op")) && (compgetter == null || prevdataroot != dataRoot))
             compgetter = dataRoot.StoreTransform("compgetter");
         var tr_find = tr.GetMethod("Find");
         const string APIPATH = "/GameplaySystems [0]/LabLib/API/";
@@ -227,6 +264,128 @@ public class LabLibCookBook : CookBook
             return evt.PersistentCallsList.Count - 1;
         }
 
+        MethodInfo objequals = typeof(object).GetMethod("Equals", UltEventUtils.AnyAccessBindings, null, new Type[] { typeof(object), typeof(object) }, null);
+        void objeqArgHelper(PersistentCall call, int argidx, int idx, NoodleDataInput input, Type overrid = null)
+        {
+            call.PersistentArguments[argidx].FSetType(PersistentArgumentType.Bool);
+            if (input != null)
+            {
+                if (input.Source == null)
+                    call.PersistentArguments[argidx].FSetInt(input.DefaultBoolValue ? 1 : 0);
+                else
+                    new PendingConnection(input.Source, evt, call, argidx).Connect(dataRoot);
+            }
+            else
+                call.PersistentArguments[argidx].ToRetVal(idx, overrid is not null ? overrid : typeof(bool));
+        }
+        int AddIsNull(int param, NoodleDataInput input)
+        {
+            var call = new PersistentCall(objequals, null);
+            call.PersistentArguments[1].FSetType(PersistentArgumentType.Object);
+            call.PersistentArguments[0].FSetType(PersistentArgumentType.Object);
+            if (input != null)
+            {
+                if (input.Source == null)
+                    call.PersistentArguments[0].FSetObject(input.DefaultObject);
+                else
+                    new PendingConnection(input.Source, evt, call, 0).Connect(dataRoot);
+            }
+            else
+                call.PersistentArguments[0].ToRetVal(param, typeof(object));
+
+            evt.PersistentCallsList.Add(call);
+            return evt.PersistentCallsList.Count - 1;
+        }
+        int AddNot(int param, NoodleDataInput input)
+        {
+            var call = new PersistentCall(objequals, null);
+            call.PersistentArguments[1].FSetType(PersistentArgumentType.Bool).FSetInt(0);
+            objeqArgHelper(call, 0, param, input);
+
+            evt.PersistentCallsList.Add(call);
+            return evt.PersistentCallsList.Count - 1;
+        }
+        int AddAnd(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
+        {
+            var call = new PersistentCall(objequals, null);
+            objeqArgHelper(call, 0, a, ia);
+            objeqArgHelper(call, 1, b, ib);
+
+            evt.PersistentCallsList.Add(call);
+            return evt.PersistentCallsList.Count - 1;
+        }
+        int sqlboolImplcit(int param, NoodleDataInput input)
+        {
+            var call = new PersistentCall(typeof(SqlBoolean).GetMethod("op_Implicit"), null);
+            objeqArgHelper(call, 0, param, input, typeof(bool));
+
+            evt.PersistentCallsList.Add(call);
+            return evt.PersistentCallsList.Count - 1;
+        }
+        int sqlboolOr(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
+        {
+            var call = new PersistentCall(typeof(SqlBoolean).GetMethod("op_BitwiseOr"), null);
+            objeqArgHelper(call, 0, a, ia, typeof(SqlBoolean));
+            objeqArgHelper(call, 1, b, ib, typeof(SqlBoolean));
+
+            evt.PersistentCallsList.Add(call);
+            return evt.PersistentCallsList.Count - 1;
+        }
+        int sqlboolTrue(int param, NoodleDataInput input)
+        {
+            var call = new PersistentCall(typeof(SqlBoolean).GetMethod("op_True"), null);
+            objeqArgHelper(call, 0, param, input, typeof(SqlBoolean));
+
+            evt.PersistentCallsList.Add(call);
+            return evt.PersistentCallsList.Count - 1;
+        }
+        int AddOr(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
+        {
+            int sqla = sqlboolImplcit(a, ia);
+            int sqlb = sqlboolImplcit(b, ib);
+
+            int sqlXor = sqlboolOr(sqla, sqlb, null, null);
+            return sqlboolTrue(sqlXor, null);
+        }
+        int AddXor(int a, int b, NoodleDataInput ia, NoodleDataInput ib)
+        {
+            // A ^ B = (A & !B) | (!A & B)
+            int nB = AddNot(b, ib);
+            int AanB = AddAnd(a, nB, ia, null);
+
+            int nA = AddNot(a, ia);
+            int BanA = AddAnd(b, nA, ib, null);
+
+            return AddOr(AanB, BanA, null, null);
+        }
+
+        void harmonyPatch(bool post)
+        {
+            string type = post ? "Postfix" : "Prefix";
+            var evtPatch = dataRoot.StoreComp<UltEventHolder>($"{node.DataInputs[0].DefaultStringValue}/{node.DataInputs[1].DefaultStringValue}/[{node.DataInputs[2].DefaultStringValue}]/@{type}");
+            evtPatch.Event.FSetPCalls(new());
+            evtPatch.gameObject.SetActive(true);
+            var trampoline = evtPatch.gameObject.AddComponent<BlipHelper>();
+            var pass = evtPatch.gameObject.AddComponent<Mask>();
+
+            node.DataOutputs[0].CompEvt = evtPatch.Event;
+            node.DataOutputs[0].CompAsParam = 0;
+            node.DataOutputs[0].UseCompAsParam = true;
+
+            node.DataOutputs[1].CompEvt = evtPatch.Event;
+            node.DataOutputs[1].CompAsParam = 1;
+            node.DataOutputs[1].UseCompAsParam = true;
+
+            var preNext = node.FlowOutputs[1].Target?.Node;
+            if (preNext != null)
+                preNext.Book.CompileNode(evtPatch.Event, preNext, evtPatch.transform);
+
+            evt.PersistentCallsList.Add(new PersistentCall(typeof(BlipHelper).GetMethod("DESTROYOBJ"), trampoline));
+
+            var evtNext = node.FlowOutputs[0].Target?.Node;
+            if (evtNext != null)
+                evtNext.Book.CompileNode(evt, evtNext, dataRoot);
+        }
         switch (node.BookTag)
         {
             case "registerMod":
@@ -620,11 +779,66 @@ public class LabLibCookBook : CookBook
                         evtNext3.Book.CompileNode(evt, evtNext3, dataRoot);
                 }
                 break;
+            case "harmonyPatchPrefix": { harmonyPatch(false); break; }
+            case "harmonyPatchPostfix": { harmonyPatch(true); break; }
+            case "harmonyInvokeOriginal":
+                {
+                    Mask target = dataRoot.GetComponent<Mask>();
+
+                    if (target == null) throw new Exception("Could not find current harmony patch event");
+
+                    var setmethod = new PersistentCall(m_setshowmask, target);
+                    setmethod.FSetArguments(new PersistentArgument().FSetType(PersistentArgumentType.Bool).FSetInt(node.DataInputs[0].DefaultBoolValue ? 1 : 0));
+                    if (node.DataInputs[0].Source != null)
+                        new PendingConnection(node.DataInputs[0].Source, evt, setmethod, 0).Connect(dataRoot);
+
+                    evt.PersistentCallsList.Add(setmethod);
+                } break;
+            case "opnot":
+                {
+                    node.DataOutputs[0].CompEvt = evt;
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[AddNot(0, node.DataInputs[0])];
+                    var evtNext = node.FlowOutputs[0].Target?.Node;
+                    if (evtNext != null)
+                        evtNext.Book.CompileNode(evt, evtNext, dataRoot);
+                } break;
+            case "opand":
+                {
+                    node.DataOutputs[0].CompEvt = evt;
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[AddAnd(0, 0, node.DataInputs[0], node.DataInputs[1])];
+                    var evtNext = node.FlowOutputs[0].Target?.Node;
+                    if (evtNext != null)
+                        evtNext.Book.CompileNode(evt, evtNext, dataRoot);
+                } break;
+            case "opor":
+                {
+                    node.DataOutputs[0].CompEvt = evt;
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[AddOr(0, 0, node.DataInputs[0], node.DataInputs[1])];
+                    var evtNext = node.FlowOutputs[0].Target?.Node;
+                    if (evtNext != null)
+                        evtNext.Book.CompileNode(evt, evtNext, dataRoot);
+                } break;
+            case "opxor":
+                {
+                    node.DataOutputs[0].CompEvt = evt;
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[AddXor(0, 0, node.DataInputs[0], node.DataInputs[1])];
+                    var evtNext = node.FlowOutputs[0].Target?.Node;
+                    if (evtNext != null)
+                        evtNext.Book.CompileNode(evt, evtNext, dataRoot);
+                } break;
+            case "opisnull":
+                {
+                    node.DataOutputs[0].CompEvt = evt;
+                    node.DataOutputs[0].CompCall = evt.PersistentCallsList[AddIsNull(0, node.DataInputs[0])];
+                    var evtNext = node.FlowOutputs[0].Target?.Node;
+                    if (evtNext != null)
+                        evtNext.Book.CompileNode(evt, evtNext, dataRoot);
+                } break;
         }
 
         var call_parent = new PersistentCall(tr.GetMethod("SetParent", UltEventUtils.AnyAccessBindings, null, new Type[] { typeof(Transform) }, null), compgetter);
         call_parent.PersistentArguments[0].Object = dataRoot;
-        if (node.BookTag != "isSpawnedWithLabLib")
+        if (node.BookTag != "isSpawnedWithLabLib" && !node.BookTag.Contains("harmony") && !node.BookTag.Contains("op"))
             evt.PersistentCallsList.Add(call_parent);
         prevdataroot = dataRoot;
     }
