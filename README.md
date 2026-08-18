@@ -23,8 +23,9 @@ Its very simple - just add an "OnLoad" tag to your crate
 you must add LabLib as a dependency
 
 # Node documentation
-Currently there are 12 nodes:
+Currently there are 20 nodes:
 ---
+All UI nodes:
 - **lablib.registerMod**
   - `Makes a page for your mod in the labmenu`
   - > Takes in a pallet (Pallet)
@@ -97,6 +98,47 @@ Currently there are 12 nodes:
   - > Takes in a pallet (Pallet), name (string), color (Color)
   - > Supported callback objects: UltEventHolder
   - > const parameters
+---
+All Harmony nodes:
+- **lablib.harmony.patchPrefix**
+  - `Hooks an UltEvent onto the beginning of a method`
+  - > Takes in a class (Type), methodName (string), params (string)
+  - > Outputs a new Event branch, __instance (System.Object), params (System.Object[])
+  - `params must be in this format`: "System.Type", "System.Int32", "System.Single"
+  - > const parameters
+---
+- **lablib.harmony.patchPostfix**
+  - `Hooks an UltEvent onto the end of a method`
+  - > Takes in a class (Type), methodName (string), params (string)
+  - > Outputs a new Event branch, __instance (System.Object), params (System.Object[])
+  - `params must be in this format`: "System.Type", "System.Int32", "System.Single"
+  - > const parameters
+---
+- **lablib.harmony.invokeOriginal**
+  - `Determines if the original method runs`
+  - > Takes in an invokeOriginal (bool)
+---
+All helper methods
+- **"op.not**
+  - `negates a boolean`
+  - Takes in a bool
+  - Outputs the negated bool
+- **"op.or**
+  - `ors booleans`
+  - Takes in 2 bools
+  - Outputs the OR of those 2 bools
+- **"op.and**
+  - `ands booleans`
+  - Takes in 2 bools
+  - Outputs the AND of those 2 bools
+- **"op.xor**
+  - `xors booleans`
+  - Takes in 2 bools
+  - Outputs the XOR of those 2 bools
+- **"op.isNull**
+  - `checks if the object is null`
+  - Takes in an object
+  - Outputs object == null
 ---
 # Example Usage
 **Mod Initialization**
