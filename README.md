@@ -25,7 +25,7 @@ you must add LabLib as a dependency
 # Node documentation
 Currently there are 20 nodes:
 ---
-All UI nodes:
+# All UI nodes:
 - **lablib.registerMod**
   - `Makes a page for your mod in the labmenu`
   - > Takes in a pallet (Pallet)
@@ -99,7 +99,7 @@ All UI nodes:
   - > Supported callback objects: UltEventHolder
   - > const parameters
 ---
-All Harmony nodes:
+# All Harmony nodes:
 - **lablib.harmony.patchPrefix**
   - `Hooks an UltEvent onto the beginning of a method`
   - > Takes in a class (Type), methodName (string), params (string)
@@ -118,7 +118,7 @@ All Harmony nodes:
   - `Determines if the original method runs`
   - > Takes in an invokeOriginal (bool)
 ---
-All helper methods
+# All helper methods
 - **op.not**
   - `negates a boolean`
   - Takes in a bool
