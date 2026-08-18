@@ -119,23 +119,23 @@ All Harmony nodes:
   - > Takes in an invokeOriginal (bool)
 ---
 All helper methods
-- **"op.not**
+- **op.not**
   - `negates a boolean`
   - Takes in a bool
   - Outputs the negated bool
-- **"op.or**
+- **op.or**
   - `ors booleans`
   - Takes in 2 bools
   - Outputs the OR of those 2 bools
-- **"op.and**
+- **op.and**
   - `ands booleans`
   - Takes in 2 bools
   - Outputs the AND of those 2 bools
-- **"op.xor**
+- **op.xor**
   - `xors booleans`
   - Takes in 2 bools
   - Outputs the XOR of those 2 bools
-- **"op.isNull**
+- **op.isNull**
   - `checks if the object is null`
   - Takes in an object
   - Outputs object == null
