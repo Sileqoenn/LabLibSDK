@@ -8,7 +8,6 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Reflection;
 using UltEvents;
-using Unity.Sentis.Layers;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -365,7 +364,7 @@ public class LabLibCookBook : CookBook
             var evtPatch = dataRoot.StoreComp<UltEventHolder>($"{node.DataInputs[0].DefaultStringValue}/{node.DataInputs[1].DefaultStringValue}/[{node.DataInputs[2].DefaultStringValue}]/@{type}");
             evtPatch.Event.FSetPCalls(new());
             evtPatch.gameObject.SetActive(true);
-            var trampoline = evtPatch.gameObject.AddComponent<BlipHelper>();
+            var trampoline = evtPatch.gameObject.AddComponent(Type.GetType("SLZ.Bonelab.BlipHelper, SLZ.Bonelab"));
             var pass = evtPatch.gameObject.AddComponent<Mask>();
 
             node.DataOutputs[0].CompEvt = evtPatch.Event;
@@ -380,7 +379,7 @@ public class LabLibCookBook : CookBook
             if (preNext != null)
                 preNext.Book.CompileNode(evtPatch.Event, preNext, evtPatch.transform);
 
-            evt.PersistentCallsList.Add(new PersistentCall(typeof(BlipHelper).GetMethod("DESTROYOBJ"), trampoline));
+            evt.PersistentCallsList.Add(new PersistentCall(Type.GetType("SLZ.Bonelab.BlipHelper, SLZ.Bonelab").GetMethod("DESTROYOBJ"), trampoline));
 
             var evtNext = node.FlowOutputs[0].Target?.Node;
             if (evtNext != null)
