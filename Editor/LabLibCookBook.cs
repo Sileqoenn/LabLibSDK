@@ -224,9 +224,6 @@ public class LabLibCookBook : CookBook
             for (int i = 0; i < param.Length; i++)
             {
                 var curParam = param[i];
-                Debug.Log(inputs != null);
-                Debug.Log(inputs.Length < i);
-                Debug.Log(inputs[i].Source != null);
                 if (curParam == null)
                     continue;
                 else if (inputs != null && i < inputs.Length && inputs[i].Source != null)
